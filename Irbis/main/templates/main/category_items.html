@@ -1,0 +1,80 @@
+{% extends 'main/base.html' %}
+
+{% load custom_filters %}
+
+{% block title %}{{ category }}{% endblock %}
+
+{% block main %}
+    {% if items|length <= 0 %}
+        <div class="d-flex justify-content-center">
+            <h2>Ничего не найдено</h2>
+        </div>
+    {% else %}
+        <div class="overflow-auto table-responsive" id="items">
+            {% if search %}
+                <h2>Найдено по запросу "{{ search }}" ({{ category }}):</h2>
+            {% else %}
+                <h2>Все {{ category|lower }}:</h2>
+            {% endif %}
+            <table class="table table-bordered table-hover table-sm align-middle">
+                <thead>
+                    <tr class="align-middle text-center">
+                        {% for field in fields %}
+                            <th scope="col">{{ field.verbose_name }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr class="text-center table-link " ondblclick="rowClick('/category/{{ category }}/view/{{ item.ID_COMPONENT }}')">
+                                {% for field in fields %}
+                                    <td>{{ item|get_attribute:field.name }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}    
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <a href="{% url 'create_category' name=category %}">
+            <svg style="width: 60px;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M6 12H18M12 6V18" stroke="#44ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+        </a>
+
+    <script>
+        function rowClick(url) {
+            window.location.href = window.location.origin+url;
+            console.log(1)
+        }
+    </script>
+
+{% endblock %}  
+{% block pagination %}
+{% if page_obj.paginator.num_pages > 1 %}
+    <div class="d-flex justify-content-center">
+        {% for page_num in page_obj.adjusted_elided_pages %}
+            {% if page_num == page_obj.paginator.ELLIPSIS %}
+                {{page_num}}
+            {% else %}
+            <div class="border rounded p-2 mx-1 page_block
+            {% if page_num == page_obj.number %}
+                border-light
+                text-light
+                bg-secondary
+            {% endif %}"
+                onclick="pageClick('{{ page_num }}')">
+                {{page_num}}
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif%}
+
+<script>
+    function pageClick(page_num) {
+        var currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('page_num', page_num);
+        window.location.href = currentUrl.toString();
+    }
+</script>
+{% endblock %}

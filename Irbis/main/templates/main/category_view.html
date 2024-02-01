@@ -1,0 +1,18 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+{{title}}
+{% endblock %}
+
+{% block main %}
+{{ form.errors }}
+
+<form method="post" enctype='multipart/form-data'>
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+    
+    <button type="submit">Сохранить</button>
+    <!-- <button type="submit">Удалить</button> -->
+</form>
+{% endblock %}

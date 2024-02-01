@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block main %}
+    <span class="fs-3 fw-semibold mx-2">Категории:</span>
+    <div class="category-grid my-3 overflow-auto">
+        {% for category in categories%}
+            <a class=" text-black text-decoration-none"
+            name="category" href="{% url 'by_category' category.name %}">
+                <div class="category rounded mx-2 bg-light fs-4 border border-1">
+                    {{ category.name }}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

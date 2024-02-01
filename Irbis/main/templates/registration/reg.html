@@ -1,0 +1,19 @@
+{% extends 'registration/login.html' %}
+
+{% block titlePage %}
+Регистрация
+{% endblock %}
+
+{% block content %}
+    <button type="submit">
+        Зарегистрироваться
+    </button>
+{% endblock %}
+
+{% block nextPage %}
+<a href="{% url 'login' %}">
+    <b>
+        Авторизация
+    </b>
+</a>
+{% endblock %}

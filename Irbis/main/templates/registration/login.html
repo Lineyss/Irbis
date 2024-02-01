@@ -1,0 +1,36 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>
+        {% block titlePage %}
+        Авторизация
+        {% endblock %}
+    </title>
+</head>
+<body style="display: flex; justify-content: center; align-items: center; ">
+    <div>
+        <div>
+            <form method="post">
+                {% csrf_token %}
+                {{form}}
+                {% block content %}
+                <button type="submit">
+                    Вход
+                </button>
+                {% endblock %}
+            </form>
+        </div>
+        <button>
+            {% block nextPage %}
+            <a href="{% url 'reg' %}">
+                <b>
+                    Регистрация
+                </b>
+            </a>
+            {% endblock %}
+        </button>
+    </div>
+</body>
+</html>

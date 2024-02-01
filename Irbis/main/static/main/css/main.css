@@ -1,0 +1,41 @@
+body {
+    background-color: white;
+    overflow: auto;
+}
+
+.home_icon {
+    height: 50px;
+    width: 50px;
+}
+
+.nav_main {
+    min-height: 10vh;
+}
+
+.filters {
+    min-height: 90vh;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
+    gap: 20px;
+    justify-content: space-around;
+}
+
+.category {
+    padding: 10px;
+    text-align: center;
+}
+
+.table-link {
+    cursor: pointer;
+}
+
+.page_block {
+    cursor: pointer;
+}
+
+.page_block:hover {
+    background-color: azure;
+}

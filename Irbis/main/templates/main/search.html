@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %}
+{% load custom_filters %}
+
+{% block title %}Поиск: {{ search }} ({{ search_area }}){% endblock %}
+
+{% block main %}
+    {% if grouped_items|length <= 0 %}
+        <div class="d-flex justify-content-center">
+            <h2>Ничего не найдено</h2>
+        </div>
+    {% else %}
+        <h2>Всего найдено по следующим категориям:</h2>
+            {% for group in grouped_items %}
+                <form method="post" action="{% url 'by_category' group.category.name search %}">
+                    {% csrf_token %}
+                    <button class="bg-transparent border-none outline-none btn">
+                        <h3 class="text-decoration-underline">{{ group.category }} ({{ group.items|length }} шт.)</h3>
+                    </button>
+                    <input hidden name="values" value="{{ group.items }}"/>
+                </form>
+            {% endfor %}
+    {% endif %}
+{% endblock %}
