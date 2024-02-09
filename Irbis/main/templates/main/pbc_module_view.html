@@ -34,8 +34,6 @@
         {% endwith %}
 
         {% if file.name is not None %}
-
-<<<<<<< HEAD
             <div id="model-container"></div>
 
             <script src="{% static 'main/js/lib/three.module.js' %}"></script>
@@ -98,14 +96,6 @@
 
                 init();
             </script>
-=======
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
-
-            <div id="model-container"></div>
-
-            {% include 'components/view3Dmodel.html' %}
->>>>>>> fbdf1f3fb5c0495ae5a655315cd3404c4e387a2f
-
         {% else %}
 
             <h3 style="text-align: center; margin-top: 20px;">
