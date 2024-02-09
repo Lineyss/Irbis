@@ -297,12 +297,9 @@ class Module(Furniture):
 
     name = models.CharField(max_length=255, null=False, unique=True, verbose_name='Название')
     """Название"""
-
-<<<<<<< HEAD
+    
     stepFile = models.FileField(null=True, upload_to='files/Step', verbose_name='3д модель')
-=======
-    stepFile = models.FileField(null=True, upload_to='files', verbose_name='3д модель')
->>>>>>> fbdf1f3fb5c0495ae5a655315cd3404c4e387a2f
+
     """3Д модель модуля """
     
     def __str__(self) -> str:
