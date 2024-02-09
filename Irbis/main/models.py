@@ -261,6 +261,15 @@ class PCB(Furniture):
     developed_by = models.ForeignKey(Employee, null=False, on_delete=models.PROTECT, verbose_name='Разработал')
     """Кем разработана плата"""
 
+    list_components = models.FileField(upload_to=f'images/{name}', null=True, blank=False, verbose_name='Перечень компонентов')
+    """Перечень компонентов"""
+
+    electrical_diagram = models.FileField(upload_to=f'images/{name}', null=True, blank=False, verbose_name='Электрическая схема')
+    """Электрическая схема"""
+
+    assembly_drawing = models.FileField(upload_to=f'images/{name}', null=True, blank=False, verbose_name='Сборный чертеж')
+    """Сборный чертеж"""
+
     def __str__(self) -> str:
         return f"{self.decimal_number} ({self.name})"
 
@@ -289,7 +298,11 @@ class Module(Furniture):
     name = models.CharField(max_length=255, null=False, unique=True, verbose_name='Название')
     """Название"""
 
+<<<<<<< HEAD
+    stepFile = models.FileField(null=True, upload_to='files/Step', verbose_name='3д модель')
+=======
     stepFile = models.FileField(null=True, upload_to='files', verbose_name='3д модель')
+>>>>>>> fbdf1f3fb5c0495ae5a655315cd3404c4e387a2f
     """3Д модель модуля """
     
     def __str__(self) -> str:
