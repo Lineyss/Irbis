@@ -1,0 +1,56 @@
+{% extends 'main/base.html' %}
+
+{% load static %}
+
+{% block title %}
+
+    {{ title }}
+
+{% endblock %}
+
+{% block main %}
+
+    {% if title == 'Плата' %}
+
+        {% include 'components/pbc_view.html' %}
+
+    {% elif title == 'Модули' %}
+
+        <div style="display: flex; margin-bottom: 20px;">
+            <h2>{{ module }}</h2>
+            <button style="margin-left: 20px;">
+                <a href="{% url 'update_view' name=title pk=pk%}">
+                    Обновить        
+                </a>
+            </button>
+        </div>
+
+        {% with fields=other.fields items=other.items %}
+            {% include 'components/table_category_view.html' %}
+        {% endwith %}
+
+        {% with fields=categoryes.fields items=categoryes.items %}
+            {% include 'components/table_category_view.html' %}
+        {% endwith %}
+
+        {% if file.name is not None %}
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+
+            <div id="model-container"></div>
+
+            {% include 'components/view3Dmodel.html' %}
+
+        {% else %}
+
+            <h3 style="text-align: center; margin-top: 20px;">
+                <b>
+                    Модели нету
+                </b>
+            </h3>
+
+        {% endif %}
+
+    {% endif %}
+
+{% endblock %}

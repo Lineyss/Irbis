@@ -1,0 +1,45 @@
+{% block css %}
+{% load static %}
+<link type="text/css" rel="stylesheet" href="{% static  'main/css/PBC.css'%}">
+{% endblock %}
+
+<div class="content">
+    <div class="header">
+        <h1>Плата под кристалл MP541</h1>
+    </div>
+    <div class="info">
+        <div class="leftPanel">
+            <h2>Гербер файлы:</h2>
+            <ul>
+                <li>top.gbr</li>
+                <li>bot.gbr</li>
+                <li>keepout.gbr</li>
+                <li>topsolder.gbr</li>
+            </ul>
+            <button>Загрузить заного</button>
+        </div>
+        <div class="rightPanel">
+            <img src="'"/>
+        </div>
+    </div>
+    <div class="files">
+        <h2>Файлы для сборки: Gerber-платы</h2>
+        <ul>
+            <li>Перечень компонентов (.xlsx) ПЭ</li>
+            <li>Электрическая схема (.pdf) ЭЭ</li>
+            <li>Сборный четреж (.pde) С4</li>
+        </ul>
+        <button>Загрузить</button>
+    </div>
+    <div class="components">
+        <h2>Доступность компонентов на складе для 1 шт</h2>
+        <table>
+            <th>
+                
+            </th>
+            <td>
+                
+            </td>
+        </table>
+    </div>
+</div>

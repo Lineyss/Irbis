@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from typing import Any
 from django.db import models
 import uuid
 
@@ -52,12 +53,6 @@ class Employee(models.Model):
 class Furniture(models.Model):
     """Базовый класс оборудования на складе"""
 
-    ID_COMPONENT = models.OneToOneField(UniqueComponent, unique = True,  blank=True, editable = False, on_delete=models.CASCADE, verbose_name='Идентификатор компонента')
-    """Уникальный идентификатор всех компонентов"""
-    
-    MFR_PART_NUM = models.CharField(max_length=100, null=True, verbose_name='Номер производителя', unique=True)
-    """Уникальный номер производителя компонента"""
-
     PCS = models.IntegerField(default=0, null=True, verbose_name='Кол-во на складе')
     """Кол-во на складе"""
 
@@ -67,31 +62,51 @@ class Furniture(models.Model):
     BOX = models.TextField(null=False, verbose_name='Место')
     """Место, где находится оборудование"""
 
-    Description = models.TextField(null=True, editable = False, verbose_name='Описание')
-    """Описание"""
-
-    class Meta:
-        abstract = True
-
-class Other(Furniture):
-    """Категория прочее"""
     def save(self, *args, **kwargs) -> None:
-        """
-        Переопределение сохранения модели:
-        Для добавления идентификатора
-        Для добавление категории
-        """
-        if self.ID_COMPONENT_id is None or self.ID_COMPONENT is None:
-            un = UniqueComponent.objects.create()
-            self.ID_COMPONENT = un
 
         try:
             cat = Category.objects.get(name=self._meta.verbose_name_plural)
             self.category = cat
         except:
-            pass
+            cat = Category.objects.create(name=self._meta.verbose_name_plural)
+            self.category = cat
+        
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+
+class AMain(Furniture):
+    """Базовый класс для категорий Диодов, Транзисторов, Прочего, Конденсаторов, Резисторов"""
+
+    ID_COMPONENT = models.OneToOneField(UniqueComponent, unique = True,  blank=True, editable = False, on_delete=models.CASCADE, verbose_name='Идентификатор компонента')
+    """Уникальный идентификатор всех компонентов"""
+    
+    MFR_PART_NUM = models.CharField(max_length=100, null=True, verbose_name='Номер производителя', unique=True)
+    """Уникальный номер производителя компонента"""
+
+    Description = models.TextField(null=True, editable = False, verbose_name='Описание')
+    """Описание"""
+
+    def save(self, *args, **kwargs) -> None:
+        if self.ID_COMPONENT_id is None or self.ID_COMPONENT is None:
+            un = UniqueComponent.objects.create()
+            self.ID_COMPONENT = un
 
         return super().save(*args, **kwargs)
+    
+    def delete(self, using: Any = ..., keep_parents: bool = ...) -> tuple[int, dict[str, int]]:
+        UniqueComponent.objects.delete(pk = self.ID_COMPONENT)
+        return super().delete(using, keep_parents)
+
+    class Meta:
+        abstract = True
+
+class Other(AMain):
+    """Категория прочее"""
+    
+    Description = models.TextField(null=True, verbose_name='Описание')
+    """Описание"""
 
     def __str__(self) -> str:
         return f"{self.ID_COMPONENT} - {self.MFR_PART_NUM}"
@@ -100,7 +115,7 @@ class Other(Furniture):
         verbose_name = 'Прочее'
         verbose_name_plural = 'Прочее'
 
-class Element(Furniture):
+class Element(AMain):
     """Базовый класс элементов печатной платы"""
 
     Photo = models.ImageField(upload_to='images/', verbose_name='Фотография')
@@ -112,6 +127,10 @@ class Element(Furniture):
     Package = models.CharField(max_length=100, null=False, verbose_name='Корпус компонента')
     """Корпус компонента"""
     
+    def save(self, *args, **kwargs) -> None:
+        self.Description = f'{self.Manufacturer} - {self.Package}'
+        return super().save(*args, **kwargs)
+
     class Meta:
         abstract = True
 
@@ -138,29 +157,6 @@ class Diodes(Element):
 
     def __str__(self) -> str:
         return f"{self.ID_COMPONENT} - {self.MFR_PART_NUM}"
-
-    def save(self, *args, **kwargs) -> None:
-        """
-        Переопределение сохранения модели:
-        Для добавления идентификатора
-        Для изменения описания
-        Для добавление категории
-        """
-
-        if self.ID_COMPONENT_id is None or self.ID_COMPONENT is None:
-            un = UniqueComponent.objects.create()
-            self.ID_COMPONENT = un
-        
-        self.Description = f'{self.Manufacturer} - {self.Package}'
-
-        try:
-            cat = Category.objects.get(name=self._meta.verbose_name_plural)
-            self.category = cat
-        except:
-            cat = Category.objects.create(name=self._meta.verbose_name_plural)
-            self.category = cat
-        
-        return super().save(*args, **kwargs)
     
     class Meta:
         verbose_name = 'Диод'
@@ -187,28 +183,6 @@ class Capacitors(Element):
     def __str__(self) -> str:
         return f"{self.ID_COMPONENT} - {self.MFR_PART_NUM}"
 
-    def save(self, *args, **kwargs) -> None:
-        """
-        Переопределение сохранения модели:
-        Для добавления идентификатора
-        Для изменения описания
-        Для добавление категории
-        """
-        if self.ID_COMPONENT_id is None or self.ID_COMPONENT is None:
-            un = UniqueComponent.objects.create()
-            self.ID_COMPONENT = un
-        
-        self.Description = f'{self.Manufacturer} - {self.Package}'
-        
-        try:
-            cat = Category.objects.get(name=self._meta.verbose_name_plural)
-            self.category = cat
-        except:
-            cat = Category.objects.create(name=self._meta.verbose_name_plural)
-            self.category = cat
-        
-        return super().save(*args, **kwargs)
-
     class Meta:
         verbose_name = 'Конденсатор'
         verbose_name_plural = 'Конденсаторы'
@@ -230,28 +204,6 @@ class Resistors(Element):
 
     def __str__(self) -> str:
         return f"{self.ID_COMPONENT} - {self.MFR_PART_NUM}"
-
-    def save(self, *args, **kwargs) -> None:
-        """
-        Переопределение сохранения модели:
-        Для добавления идентификатора
-        Для изменения описания
-        Для добавление категории
-        """
-        if self.ID_COMPONENT_id is None or self.ID_COMPONENT is None:
-            un = UniqueComponent.objects.create()
-            self.ID_COMPONENT = un
-        
-        self.Description = f'{self.Manufacturer} - {self.Package}'
-        
-        try:
-            cat = Category.objects.get(name=self._meta.verbose_name_plural)
-            self.category = cat
-        except:
-            cat = Category.objects.create(name=self._meta.verbose_name_plural)
-            self.category = cat
-
-        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Резистор'
@@ -289,28 +241,6 @@ class Transistors(Element):
 
     def __str__(self) -> str:
         return f"{self.ID_COMPONENT} - {self.MFR_PART_NUM}"
-    
-    def save(self, *args, **kwargs) -> None:
-        """
-        Переопределение сохранения модели:
-        Для добавления идентификатора
-        Для изменения описания
-        Для добавление категории
-        """
-        if self.ID_COMPONENT_id is None or self.ID_COMPONENT is None:
-            un = UniqueComponent.objects.create()
-            self.ID_COMPONENT = un
-        
-        self.Description = f'{self.Manufacturer} - {self.Package}'
-        
-        try:
-            cat = Category.objects.get(name=self._meta.verbose_name_plural)
-            self.category = cat
-        except:
-            cat = Category.objects.create(name=self._meta.verbose_name_plural)
-            self.category = cat
-
-        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Транзистор'
@@ -333,16 +263,6 @@ class PCB(Furniture):
 
     def __str__(self) -> str:
         return f"{self.decimal_number} ({self.name})"
-
-    def save(self, *args, **kwargs) -> None:
-        """Переопределение функции сохранения, чтобы категория нужная категория подставлялась автоматически"""
-
-        if self.ID_COMPONENT_id is None or self.ID_COMPONENT is None:
-            un = UniqueComponent.objects.create()
-            self.ID_COMPONENT = un
-
-        self.category = Category.objects.get(name='Платы')
-        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Плата"
@@ -369,30 +289,11 @@ class Module(Furniture):
     name = models.CharField(max_length=255, null=False, unique=True, verbose_name='Название')
     """Название"""
 
+    stepFile = models.FileField(null=True, upload_to='files', verbose_name='3д модель')
+    """3Д модель модуля """
+    
     def __str__(self) -> str:
         return self.name
-
-    def save(self, *args, **kwargs) -> None:
-        """
-        Переопределение сохранения модели:
-        Для добавления идентификатора
-        Для добавление категории
-        """
-        if self.ID_COMPONENT_id is None or self.ID_COMPONENT is None:
-            un = UniqueComponent.objects.create()
-            self.ID_COMPONENT = un
-
-        try:
-            cat = Category.objects.get(name=self._meta.verbose_name_plural)
-            self.category = cat
-        except:
-            cat = Category.objects.create(name=self._meta.verbose_name_plural)
-            self.category = cat
-        
-        return super().save(*args, **kwargs)
-
-    def __str__(self) -> str:
-        return f"{self.name}"
     
     class Meta:
         verbose_name = "Модуль"

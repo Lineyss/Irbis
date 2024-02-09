@@ -1,18 +1,36 @@
 {% extends 'main/base.html' %}
 
 {% block title %}
+
 {{title}}
+
 {% endblock %}
 
 {% block main %}
+
 {{ form.errors }}
 
-<form method="post" enctype='multipart/form-data'>
-    {% csrf_token %}
-    
-    {{ form.as_p }}
-    
-    <button type="submit">Сохранить</button>
-    <!-- <button type="submit">Удалить</button> -->
-</form>
+<div style="display: flex; justify-content: space-evenly; align-items: center;">
+    <form method="post" enctype='multipart/form-data'>
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <button type="submit">Сохранить</button>
+        <!-- <button type="submit">Удалить</button> -->
+    </form>
+
+    <img id="Image" src="" style="max-width: 500px; max-height: 500px;"/>
+</div>
+
+
+<script>
+    let img = document.getElementById('Image')
+    let label = document.querySelector("[for='id_Photo']");
+    let p = label.parentElement
+    let a = p.children[1]
+
+    img.src = a.href
+</script>
+
 {% endblock %}

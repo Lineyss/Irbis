@@ -1,0 +1,38 @@
+{% load custom_filters %}
+<table class="table table-bordered table-hover table-sm align-middle">
+    <thead>
+        <tr class="align-middle text-center">
+            {% for field in fields %}
+                <th scope="col">{{ field.verbose_name }}</th>
+            {% endfor %}
+            {% if need_category and fields != '' %}
+                <th scope="col">Категория</th>
+            {% endif %}
+        </tr>
+    </thead>
+        <tbody>
+            {% for item in items %}
+                <tr class="text-center table-link " ondblclick="rowClick('{{item.category.name }}' , '{{ item.pk }}')">
+                    {% for field in fields %}
+                        <td>{{ item|get_attribute:field.name }}</td>
+                    {% endfor %}
+                    {% if need_category %}
+                        <td>{{ item.category.name }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}    
+    </tbody>
+</table>
+
+<script>
+    function rowClick(module_name, item_pk) {
+        url = '';
+        if (module_name == 'Модули' || module_name == 'Платы')
+            url = '/category/' + module_name + '/detail/' + item_pk;
+        else
+            url = '/category/' + module_name + '/update/' + item_pk;
+
+        window.location.href = window.location.origin+url;
+        console.log(1)
+    }
+</script>

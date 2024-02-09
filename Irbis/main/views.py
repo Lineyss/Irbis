@@ -123,21 +123,76 @@ def search(request):
 
     return render(request, 'main/search.html', data)
 
-def category_view(request, name, id):
-
+def detail_view(request,name,pk):
     category = Category.objects.get(name = name)
     model = get_furnitures(category)['model']
+    model = model.objects.get(pk = pk)
 
-    form = get_model_form(model)
-    model = model.objects.get(ID_COMPONENT = id)
+    data = {}
+
+    if model._meta.verbose_name == 'Модуль':
+        data = {
+            'module': str(model),
+            'title': model._meta.verbose_name_plural,
+            'file': model.stepFile,
+            'pk': model.pk,
+            'other': {
+                'fields': '',
+                'items': ()
+            },
+            'categoryes': {
+                'fields': '',
+                'items': ()
+            },
+            'need_category': True
+        }
+
+        moduleCompositions = ModuleComposition.objects.filter(module = model)
+
+        for moduleComposition in moduleCompositions:
+
+            elements = PCBComposition.objects.filter(pcb = moduleComposition.pcb)
+
+            for element in elements:
+                if(element.element is None): continue
+
+                AMain_item = get_AMains_by_id_component(element.element.pk)
+
+                if AMain_item['object'] is None: continue
+
+                if AMain_item['model'] is Other:
+                    data['other']['fields'] = AMain_item['fields']
+                    objects = data['other']['items']
+                    objects = list(objects)
+                    objects.append(AMain_item['object'])
+                    data['other']['items'] = objects
+                else:
+                    data['categoryes']['fields'] = AMain_item['fields']
+                    objects = data['categoryes']['items']
+                    objects = list(objects) 
+                    objects.append(AMain_item['object'])
+                    data['categoryes']['items'] = objects
     
-    if request.method == 'GET':
+    elif model._meta.verbose_name == 'PCB':
+        pass
+    else:
+        return render('Ошибка')
+    return render(request, 'main/pbc_module_view.html', data)
 
+def update_view(request, name,pk):
+    category = Category.objects.get(name = name)
+    model = get_furnitures(category)['model']
+    model = model.objects.get(pk = pk)
+    
+    form = get_model_form(model)
+
+    if request.method == 'GET':
+        
         data = {
             'form': form(instance=model),
             'title': model._meta.verbose_name
         }
-
+        
         return render(request, 'main/category_view.html', data)
     
     elif request.method == 'POST':
@@ -145,10 +200,10 @@ def category_view(request, name, id):
         if form.is_valid():
             form.save()
 
-        return redirect('category_view', name , id)
+        return redirect('update_view', name , pk)
 
 def create_category(request, name):
-
+    print(name)
     category = Category.objects.get(name = name)
     model = get_furnitures(category)['model']
 

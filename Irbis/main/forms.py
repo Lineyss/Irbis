@@ -24,7 +24,7 @@ def get_createViewModel(Model:Type[models.Model]):
         model = Model
         fields = '__all__'
         template_name = 'main/category_view.html'
-        success_url = reverse_lazy('by_category')
+        success_url = reverse_lazy('main_index')
         
         def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
             data = super().get_context_data(**kwargs)

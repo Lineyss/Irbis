@@ -1,0 +1,59 @@
+<style>
+    .row
+    {
+        flex-wrap: nowrap !important;
+    }
+</style>
+
+<script>
+
+let filePath = '{{ file }}';
+
+function Drow3DModel(urlFile) {
+    console.log(urlFile)
+    // Получите контейнер для отображения модели
+    const container = document.getElementById('model-container');
+    
+    // Создайте сцену
+    const scene = new THREE.Scene();
+    
+    // Создайте камеру
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    
+    // Создайте рендерер
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+    
+    // Создайте загрузчик
+    const loader = new THREE.STLLoader();
+    
+    // Загрузите файл STEP и отобразите его модель
+    loader.load('model.step', function (geometry) {
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+    
+        // Переместите камеру относительно модели для лучшего отображения
+        camera.position.z = Math.max(geometry.boundingSphere.radius * 2, 500);
+    });
+    
+    
+    // Функция для обновления отображения
+    function animate() {
+        requestAnimationFrame(animate);
+    
+        // Вращение модели
+        scene.children[0].rotation.x += 0.01;
+        scene.children[0].rotation.y += 0.01;
+    
+        renderer.render(scene, camera);
+    }
+
+    animate();
+}
+
+if (filePath != null)   
+    Drow3DModel(window.location.origin + '/' + filePath)
+
+</script>

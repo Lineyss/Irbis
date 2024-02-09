@@ -14,6 +14,16 @@ def get_all_furniture_models():
 
     return list(models)
 
+def get_all_AMain_models():
+    """Получение всех моделей, что наследуются от абстрактного класса AMain
+    
+    Returns:
+        list: список всех поделей, что наследуются от абстракного класса AMain"""
+    
+    models = filter(lambda model: issubclass(model, AMain), apps.get_models())
+
+    return list(models)
+
 def get_model_not_auto_created_fields(model: Type[models.Model]):
     """Получение тех полей модели, которые были написаны вручную, а не сгенерированы.
 
@@ -125,6 +135,61 @@ def get_furnitures(category_obj: Category = None, include_category:bool = False)
         'model': model
     }
 
+def get_AMains_by_id_component(id_component: int = None,)-> dict:
+    """ Получение модели наследумой от AMain по id_component
+
+    Returns:
+        dict: словарь модели
+        'object' - полученный объект
+        'fields' - строки
+        'model' - модель объекта 
+    """
+
+    model = None
+    object = None
+    fields = None
+
+    AMain_models = get_all_AMain_models()
+
+    for AMain_model in AMain_models:
+
+        try:
+            AMain_object = AMain_model.objects.get(ID_COMPONENT = id_component)
+
+            object = AMain_object
+            model = AMain_model
+
+            fields = get_model_not_auto_created_fields(AMain_model)
+            fields = reorder_furniture_fields(fields)
+
+
+            if object is Other:
+                fields = list(filter(lambda field:  field.name != 'category',   fields))
+            else:
+                fields = list(filter(lambda field:  field.name == 'ID_COMPONENT' or 
+                                                    field.name == "MFR_PART_NUM" or
+                                                    field.name == "Package"      or 
+                                                    field.name == "PCS"          or
+                                                    field.name == "BOX"          or 
+                                                    field.name == "Description", fields))
+                
+            break
+
+        except:
+            pass
+    
+    
+    return {
+        'object': object,
+        'fields': fields,
+        'model': model
+    }
+
+
+
+
+
+
 def group_list_by_category(items: list):
     grouped_items = []
     for key, group in groupby(items, lambda item: item.category):
@@ -163,7 +228,7 @@ def search_items(search: str, category: Category = None):
                 for field in fields:
                     val = getattr(item, field.name)
                     if val is None:
-                        pass
+                        passa
                     match = re.search(search.lower(), str(val).lower())
                     if match:
                         found_items.append(item)

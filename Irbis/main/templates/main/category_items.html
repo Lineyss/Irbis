@@ -16,37 +16,15 @@
             {% else %}
                 <h2>Все {{ category|lower }}:</h2>
             {% endif %}
-            <table class="table table-bordered table-hover table-sm align-middle">
-                <thead>
-                    <tr class="align-middle text-center">
-                        {% for field in fields %}
-                            <th scope="col">{{ field.verbose_name }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                    <tbody>
-                        {% for item in items %}
-                            <tr class="text-center table-link " ondblclick="rowClick('/category/{{ category }}/view/{{ item.ID_COMPONENT }}')">
-                                {% for field in fields %}
-                                    <td>{{ item|get_attribute:field.name }}</td>
-                                {% endfor %}
-                            </tr>
-                        {% endfor %}    
-                </tbody>
-            </table>
+
+            {% include 'components/table_category_view.html' %}
+
         </div>
         {% endif %}
 
         <a href="{% url 'create_category' name=category %}">
             <svg style="width: 60px;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M6 12H18M12 6V18" stroke="#44ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
         </a>
-
-    <script>
-        function rowClick(url) {
-            window.location.href = window.location.origin+url;
-            console.log(1)
-        }
-    </script>
 
 {% endblock %}  
 {% block pagination %}
