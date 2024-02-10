@@ -174,7 +174,15 @@ def detail_view(request,name,pk):
                     data['categoryes']['items'] = objects
     
     elif model._meta.verbose_name == 'PCB':
-        pass
+        
+        data = {
+            ''
+        }
+
+        if request.method == 'GET':
+            pass
+        elif request.method == 'POST':
+            pass
     else:
         return render('Ошибка')
     return render(request, 'main/pbc_module_view.html', data)
