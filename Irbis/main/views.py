@@ -1,10 +1,10 @@
+from .session_filters import apply_filters, apply_page, is_empty
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from django.views.generic import DetailView
-from django.forms import *
 from .models_fields import *
+from .not_urls_views import *
+from django.forms import *
 from .models import *
-from .session_filters import apply_filters, apply_page, is_empty
 from .forms import *
 
 DEFAULT_SEARCH_AREA = 'Везде'
@@ -124,6 +124,7 @@ def search(request):
     return render(request, 'main/search.html', data)
 
 def detail_view(request,name,pk):
+
     category = Category.objects.get(name = name)
     model = get_furnitures(category)['model']
     model = model.objects.get(pk = pk)
@@ -131,61 +132,15 @@ def detail_view(request,name,pk):
     data = {}
 
     if model._meta.verbose_name == 'Модуль':
-        data = {
-            'module': str(model),
-            'title': model._meta.verbose_name_plural,
-            'file': model.stepFile,
-            'pk': model.pk,
-            'other': {
-                'fields': '',
-                'items': ()
-            },
-            'categoryes': {
-                'fields': '',
-                'items': ()
-            },
-            'need_category': True
-        }
-
-        moduleCompositions = ModuleComposition.objects.filter(module = model)
-
-        for moduleComposition in moduleCompositions:
-
-            elements = PCBComposition.objects.filter(pcb = moduleComposition.pcb)
-
-            for element in elements:
-                if(element.element is None): continue
-
-                AMain_item = get_AMains_by_id_component(element.element.pk)
-
-                if AMain_item['object'] is None: continue
-
-                if AMain_item['model'] is Other:
-                    data['other']['fields'] = AMain_item['fields']
-                    objects = data['other']['items']
-                    objects = list(objects)
-                    objects.append(AMain_item['object'])
-                    data['other']['items'] = objects
-                else:
-                    data['categoryes']['fields'] = AMain_item['fields']
-                    objects = data['categoryes']['items']
-                    objects = list(objects) 
-                    objects.append(AMain_item['object'])
-                    data['categoryes']['items'] = objects
-    
+        data = module_detail_view(model)
     elif model._meta.verbose_name == 'PCB':
-        
-        data = {
-            ''
-        }
-
-        if request.method == 'GET':
-            pass
-        elif request.method == 'POST':
-            pass
+        data = pcb_detail_view(model)
     else:
-        return render('Ошибка')
-    return render(request, 'main/pbc_module_view.html', data)
+        return redirect('update_view', name , pk)
+    
+    data['detailView'] = True
+
+    return render(request, 'main/category_view.html', data)
 
 def update_view(request, name,pk):
     category = Category.objects.get(name = name)
@@ -218,3 +173,5 @@ def create_category(request, name):
     createView = get_createViewModel(model)
 
     return createView(request)
+
+# Не используемые view в url
