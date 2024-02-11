@@ -136,13 +136,14 @@ def detail_view(request,name,pk):
     elif model._meta.verbose_name == 'PCB':
         data = pcb_detail_view(model)
     else:
-        return redirect('update_view', name , pk)
+        return redirect(update_view, name , pk)
     
     data['detailView'] = True
 
     return render(request, 'main/category_view.html', data)
 
 def update_view(request, name,pk):
+    print(1)
     category = Category.objects.get(name = name)
     model = get_furnitures(category)['model']
     model = model.objects.get(pk = pk)
@@ -166,12 +167,10 @@ def update_view(request, name,pk):
         return redirect('update_view', name , pk)
 
 def create_category(request, name):
-    print(name)
+
     category = Category.objects.get(name = name)
     model = get_furnitures(category)['model']
 
     createView = get_createViewModel(model)
 
     return createView(request)
-
-# Не используемые view в url

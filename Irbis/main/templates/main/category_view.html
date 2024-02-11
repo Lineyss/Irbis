@@ -8,6 +8,8 @@
 
 {% block main %}
 
+    <button onclick="buttonClick()">К категории</button>
+    
     {% if detailView %}
 
         {% if title == 'Плата' %}
@@ -48,5 +50,17 @@
         </script>
 
     {% endif %}
+
+    <script>
+        function buttonClick()
+        {
+            let arrUrl = window.location.href.split('/')
+
+            arrUrl.pop()
+            arrUrl.pop()
+            
+            window.location.href = arrUrl.join("/")
+        }
+    </script>
 
 {% endblock %}

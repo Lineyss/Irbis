@@ -26,13 +26,6 @@
 
 <script>
     function rowClick(module_name, item_pk) {
-        url = '';
-        if (module_name == 'Модули' || module_name == 'Платы')
-            url = '/category/' + module_name + '/detail/' + item_pk;
-        else
-            url = '/category/' + module_name + '/update/' + item_pk;
-
-        window.location.href = window.location.origin+url;
-        console.log(1)
+        window.location.href = window.location.origin + '/category/' + module_name + '/detail/' + item_pk;
     }
 </script>
