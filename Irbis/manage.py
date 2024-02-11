@@ -2,11 +2,6 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-import subprocess
-
-def run_pip_freeze():
-    """Установка всех недостающих пакетов при запуске проекта"""
-    subprocess.call(['pip', 'install', '-r', 'require.txt'])
 
 def main():
     """Run administrative tasks."""
@@ -23,5 +18,4 @@ def main():
 
 
 if __name__ == "__main__":
-    run_pip_freeze()
     main()
