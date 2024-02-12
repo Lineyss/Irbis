@@ -25,6 +25,9 @@
                     {% if need_category  %}
                         <td>{{ item.category.name }}</td>
                     {% endif %}
+                    {% if need_count %}
+                        <td>{{ item.category.name }}</td>
+                    {% endif %}
                 </tr>
             {% endfor %}    
     </tbody>

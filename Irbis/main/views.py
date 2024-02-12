@@ -129,10 +129,10 @@ def detail_view(request,name,pk):
 
     data = {}
 
-    if model._meta.verbose_name == 'Модуль':
+    if type(model) is Module:
         data = module_detail_view(model)
-    elif model._meta.verbose_name == 'Плата':
-        data = pcb_detail_view(request, model)
+    elif type(model) is PCB:
+        data = pcb_detail_view(model)
     else:
         return redirect(update_view, name , pk)
     

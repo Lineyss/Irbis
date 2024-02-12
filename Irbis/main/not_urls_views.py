@@ -17,15 +17,21 @@ def module_detail_view(model):
 
     return data
 
-def pcb_detail_view(request, model):
+def pcb_detail_view(model):
     data = get_data()
 
     elements = PCBComposition.objects.filter(pcb = model)
 
     data = get_all_connected_element(elements, data)
 
-    if request.method == 'POST':
-        pass
+    fields = data['element']['fields']
+
+    _fields = list(filter(lambda field:  field.name == 'ID_COMPONENT' or
+                                        field.name == 'MFR_PART_NUM' or
+                                        field.name == 'Description'  or
+                                        field.name == 'BOX', fields ))
+
+    data['fields'] = _fields
 
     data['gbrs'] = None
     data['buildFiles'] = None
