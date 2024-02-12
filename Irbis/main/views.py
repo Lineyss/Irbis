@@ -125,28 +125,33 @@ def search(request):
 
 def detail_view(request,name,pk):
 
-    category = Category.objects.get(name = name)
-    model = get_furnitures(category)['model']
-    model = model.objects.get(pk = pk)
+    model = search_model_by_pk(name, pk)
 
     data = {}
 
     if model._meta.verbose_name == 'Модуль':
         data = module_detail_view(model)
-    elif model._meta.verbose_name == 'PCB':
-        data = pcb_detail_view(model)
+    elif model._meta.verbose_name == 'Плата':
+        data = pcb_detail_view(request, model)
     else:
         return redirect(update_view, name , pk)
     
     data['detailView'] = True
+    data['title'] = model._meta.verbose_name_plural
+    data['module'] = str(model)
+    data['pk'] = model.pk
+
+    print(data)
 
     return render(request, 'main/category_view.html', data)
 
-def update_view(request, name,pk):
-    print(1)
-    category = Category.objects.get(name = name)
-    model = get_furnitures(category)['model']
-    model = model.objects.get(pk = pk)
+def pcb_uploadFiles(request):
+    if request.method == 'POST':
+        pass
+
+def update_view(request,name, pk):
+    
+    model = search_model_by_pk(name, pk)
     
     form = get_model_form(model)
 

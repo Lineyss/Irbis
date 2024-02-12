@@ -5,7 +5,7 @@
             {% for field in fields %}
                 <th scope="col">{{ field.verbose_name }}</th>
             {% endfor %}
-            {% if need_category and fields != '' %}
+            {% if need_category and fields is not None %}
                 <th scope="col">Категория</th>
             {% endif %}
         </tr>
@@ -14,9 +14,15 @@
             {% for item in items %}
                 <tr class="text-center table-link " ondblclick="rowClick('{{item.category.name }}' , '{{ item.pk }}')">
                     {% for field in fields %}
-                        <td>{{ item|get_attribute:field.name }}</td>
+                        <td>
+                            {% if item|get_attribute:field.name is None or item|get_attribute:field.name == '' %}
+                                -
+                            {% else %}
+                                {{ item|get_attribute:field.name }}
+                            {% endif %}
+                        </td>
                     {% endfor %}
-                    {% if need_category %}
+                    {% if need_category  %}
                         <td>{{ item.category.name }}</td>
                     {% endif %}
                 </tr>

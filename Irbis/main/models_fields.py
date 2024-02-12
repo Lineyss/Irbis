@@ -115,6 +115,7 @@ def get_furnitures(category_obj: Category = None, include_category:bool = False)
                 for field in fields:
                     if field.name == 'ID_COMPONENT':
                         getAllFields = False
+                        
 
             if not include_category:
                 if getAllFields:
@@ -172,7 +173,7 @@ def get_AMains_by_id_component(id_component: int = None,)-> dict:
                                                     field.name == "PCS"          or
                                                     field.name == "BOX"          or 
                                                     field.name == "Description", fields))
-                
+        
             break
 
         except:

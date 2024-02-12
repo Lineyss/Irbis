@@ -112,6 +112,12 @@
                                 </li>
                             </ul>
                         </form>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <li class="nav-item" style="list-style-type: none; margin-top: 20px;">
+                                <button class="btn btn-exit w-100 my-1" type="submit" name="logout">Выйти</button>
+                            </li>
+                        </form>
                     </div>
                 </div>
             </div>

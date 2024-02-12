@@ -4,42 +4,53 @@
 {% endblock %}
 
 <div class="content">
-    <div class="header">
-        <h1>Плата под кристалл MP541</h1>
-    </div>
     <div class="info">
         <div class="leftPanel">
             <h2>Гербер файлы:</h2>
             <ul>
-                <li>top.gbr</li>
-                <li>bot.gbr</li>
-                <li>keepout.gbr</li>
-                <li>topsolder.gbr</li>
+                {% if gbrs is None %}
+                    Файлы не загружены
+                {% endif %}
+
+                {% for gbr in gbrs %}
+                    <li>{{gbr}}</li>
+                {% endfor %}
             </ul>
-            <button>Загрузить заного</button>
+            <form method="post">
+                {% csrf_token %}
+                <button>Загрузить заного</button>
+            </form>
         </div>
         <div class="rightPanel">
             <img src="'"/>
         </div>
     </div>
     <div class="files">
-        <h2>Файлы для сборки: Gerber-платы</h2>
+        <h2>Файлы для сборки:</h2>
         <ul>
-            <li>Перечень компонентов (.xlsx) ПЭ</li>
-            <li>Электрическая схема (.pdf) ЭЭ</li>
-            <li>Сборный четреж (.pde) С4</li>
+            {% if buildFiles is None %}
+                Файлы не загружены
+            {% endif %}
+
+            {% for buildFile in buildFiles %}
+                <li>{{buildFile}}</li>
+            {% endfor %}
         </ul>
-        <button>Загрузить</button>
+        <form method="post">
+            {% csrf_token %}
+            <button>Загрузить</button>
+        </form>
     </div>
     <div class="components">
         <h2>Доступность компонентов на складе для 1 шт</h2>
-        <table>
-            <th>
-                
-            </th>
-            <td>
-                
-            </td>
-        </table>
+
+        {% if categoryes.fields is None and other.fields is None %}
+            <p>Комопнентов нету</p>
+        {% endif %}
+
+        {% with fields=element.fields items=element.items %}
+            {% include 'components/table_category_view.html' %}
+        {% endwith %}
+
     </div>
 </div>

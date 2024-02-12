@@ -1,23 +1,9 @@
-from .models_fields import get_AMains_by_id_component
+from .models_fields import get_AMains_by_id_component,get_furnitures
 from .models import *
 from .forms import *
 
 def module_detail_view(model):
-    data = {
-            'module': str(model),
-            'title': model._meta.verbose_name_plural,
-            'file': model.stepFile,
-            'pk': model.pk,
-            'other': {
-                'fields': '',
-                'items': ()
-            },
-            'categoryes': {
-                'fields': '',
-                'items': ()
-            },
-            'need_category': True
-        }
+    data = get_data()
 
     moduleCompositions = ModuleComposition.objects.filter(module = model)
 
@@ -25,31 +11,55 @@ def module_detail_view(model):
 
         elements = PCBComposition.objects.filter(pcb = moduleComposition.pcb)
 
-        for element in elements:
-            if(element.element is None): continue
+        data = get_all_connected_element(elements, data)
 
-            AMain_item = get_AMains_by_id_component(element.element.pk)
-
-            if AMain_item['object'] is None: continue
-
-            if AMain_item['model'] is Other:
-                data['other']['fields'] = AMain_item['fields']
-                objects = data['other']['items']
-                objects = list(objects)
-                objects.append(AMain_item['object'])
-                data['other']['items'] = objects
-            else:
-                data['categoryes']['fields'] = AMain_item['fields']
-                objects = data['categoryes']['items']
-                objects = list(objects) 
-                objects.append(AMain_item['object'])
-                data['categoryes']['items'] = objects
-    
-    return data
-
-def pcb_detail_view(model):
-    data = {
-        ''
-    }
+    data['file'] = model.stepFile
 
     return data
+
+def pcb_detail_view(request, model):
+    data = get_data()
+
+    elements = PCBComposition.objects.filter(pcb = model)
+
+    data = get_all_connected_element(elements, data)
+
+    if request.method == 'POST':
+        pass
+
+    data['gbrs'] = None
+    data['buildFiles'] = None
+
+    return data
+
+def search_model_by_pk(name, pk):
+    category = Category.objects.get(name = name)
+    model = get_furnitures(category)['model']
+    return model.objects.get(pk = pk)
+
+def get_all_connected_element(elements, data = None):
+    data = get_data(data)
+
+    for element in elements:
+        if(element.element is None): continue
+
+        AMain_item = get_AMains_by_id_component(element.element.pk)
+
+        if AMain_item['object'] is None: continue
+
+        data['element']['fields'] = AMain_item['fields']
+        objects = data['element']['items']
+        objects = list() if objects is None else list(objects)
+        objects.append(AMain_item['object'])
+        data['element']['items'] = objects
+
+    return data
+
+def get_data(data = None):
+    return data if data is not None else {
+            'element': {
+                'fields': None,
+                'items': None
+            },
+            'need_category': True
+        }

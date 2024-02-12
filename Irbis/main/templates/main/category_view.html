@@ -12,7 +12,17 @@
     
     {% if detailView %}
 
-        {% if title == 'Плата' %}
+        <div style="display: flex; margin: 20px 0; ">
+            <h2>{{ module }}</h2>
+            <button style="margin-left: 20px;">
+                <a  href="{% url 'update_view' name=title pk=pk%}" 
+                    style="text-decoration: none; color: black;">
+                    Обновить        
+                </a>
+            </button>
+        </div>
+
+        {% if title == 'Платы' %}
 
             {% include 'components/pbc_view.html' %}
 
@@ -56,10 +66,13 @@
         {
             let arrUrl = window.location.href.split('/')
 
-            arrUrl.pop()
-            arrUrl.pop()
-            
-            window.location.href = arrUrl.join("/")
+            if(arrUrl[3] == 'create')
+            {
+                window.location.href = window.location.origin + '/category/' + arrUrl[5]
+                return;
+            }
+
+            window.location.href = window.location.origin + '/category/' + arrUrl[4]
         }
     </script>
 
