@@ -1,10 +1,25 @@
+{% load static %}
 {% block header %}
-    {% load static %}
-    <link type="text/css" rel="stylesheet" href="{% static  'main/css/PBC.css'%}">
+<link type="text/css" rel="stylesheet" href="{% static  'main/css/PBC.css'%}">
 {% endblock %}
 
 <div class="content">
-    <div class="info">
+    <div class=" hide popup-container">
+        <div class="form_container">
+            <div class="exit_block">
+                <button class="exit_popup">
+                    ❌
+                </button>
+            </div>
+            <form method="post" action="{% url 'pbc_upload_files' %}?model={{module}}" 
+                  class="upload_file_form_main"  enctype='multipart/form-data'>
+                {% csrf_token %}
+                {{form_upload_files.as_p}}
+                <button style="margin: 10px 0px;">Загрузить</button>
+            </form>
+        </div>
+    </div>
+    <div class="info">  
         <div class="leftPanel">
             <h2>Гербер файлы:</h2>
             <ul>
@@ -16,10 +31,7 @@
                     <li>{{gbr}}</li>
                 {% endfor %}
             </ul>
-            <form method="post">
-                {% csrf_token %}
-                <button>Загрузить заного</button>
-            </form>
+            <button>Загрузить заного</button>   
         </div>
         <div class="rightPanel">
             <img src="'"/>
@@ -28,29 +40,32 @@
     <div class="files">
         <h2>Файлы для сборки:</h2>
         <ul>
-            {% if buildFiles is None %}
-                Файлы не загружены
-            {% endif %}
-
-            {% for buildFile in buildFiles %}
-                <li>{{buildFile}}</li>
-            {% endfor %}
+            <li class="not-exist">
+                Перечень компонентов (.xlsx) ПЭ
+            </li>
+            <li class="not-exist">
+                Электрическая схема (.pdf) ЭЭ
+            </li>
+            <li class="not-exist">
+                Сборный чертеж (.pdf) С4
+            </li>
         </ul>
-        <form method="post">
-            {% csrf_token %}
-            <button>Загрузить</button>
-        </form>
+        <button id="upload_pbc">Загрузить</button>
     </div>
     <div class="components">
+
         <h2>Доступность компонентов на складе для 1 шт</h2>
 
-        {% if categoryes.fields is None and other.fields is None %}
+        {% if element.fields is None or element.items is None %}
             <p>Комопнентов нету</p>
+        {% else %}
+            {% with fields=element.fields items=element.items %}
+                {% include 'components/table_category_view.html' %}
+            {% endwith %}
         {% endif %}
 
-        {% with fields=element.fields items=element.items %}
-            {% include 'components/table_category_view.html' %}
-        {% endwith %}
 
     </div>
 </div>
+
+<script src="{% static 'main/js/pbc_view.js' %}"></script>

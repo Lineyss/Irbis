@@ -12,6 +12,8 @@ urlpatterns = [
     path("compose/<str:model_name>/<int:composed_id>", views.composition, name='composition'),
     path("search", views.search, name='search'),
 
+    path('pbc/upload_files', views.upload_pcb_files, name='pbc_upload_files'),
+
     path("auth/login", LoginView.as_view(redirect_authenticated_user=True), name='login'),
     path("auth/logout", LogoutView.as_view(), name='logout'),
     # path("auth/reg", views.RegisterView.as_view(), name='reg')

@@ -5,9 +5,6 @@
             {% for field in fields %}
                 <th scope="col">{{ field.verbose_name }}</th>
             {% endfor %}
-            {% if need_category and fields is not None %}
-                <th scope="col">Категория</th>
-            {% endif %}
         </tr>
     </thead>
         <tbody>
@@ -22,12 +19,6 @@
                             {% endif %}
                         </td>
                     {% endfor %}
-                    {% if need_category  %}
-                        <td>{{ item.category.name }}</td>
-                    {% endif %}
-                    {% if need_count %}
-                        <td>{{ item.category.name }}</td>
-                    {% endif %}
                 </tr>
             {% endfor %}    
     </tbody>

@@ -136,7 +136,7 @@ def get_furnitures(category_obj: Category = None, include_category:bool = False)
         'model': model
     }
 
-def get_AMains_by_id_component(id_component: int = None,)-> dict:
+def get_AMains_by_id_component(id_component: int)-> dict:
     """ Получение модели наследумой от AMain по id_component
 
     Returns:

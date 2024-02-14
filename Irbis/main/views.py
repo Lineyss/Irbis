@@ -1,6 +1,7 @@
 from .session_filters import apply_filters, apply_page, is_empty
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
+from django.http import HttpResponse
 from .models_fields import *
 from .not_urls_views import *
 from django.forms import *
@@ -125,6 +126,9 @@ def search(request):
 
 def detail_view(request,name,pk):
 
+    if request.method == 'POST':
+        return HttpResponse(status=400)
+
     model = search_model_by_pk(name, pk)
 
     data = {}
@@ -133,15 +137,14 @@ def detail_view(request,name,pk):
         data = module_detail_view(model)
     elif type(model) is PCB:
         data = pcb_detail_view(model)
+        data['form_upload_files'] = PCB_Upload_FileForm(instance=model)
     else:
         return redirect(update_view, name , pk)
     
     data['detailView'] = True
     data['title'] = model._meta.verbose_name_plural
-    data['module'] = str(model)
+    data['module'] = model
     data['pk'] = model.pk
-
-    print(data)
 
     return render(request, 'main/category_view.html', data)
 
@@ -172,10 +175,30 @@ def update_view(request,name, pk):
         return redirect('update_view', name , pk)
 
 def create_category(request, name):
-
     category = Category.objects.get(name = name)
     model = get_furnitures(category)['model']
-
     createView = get_createViewModel(model)
 
     return createView(request)
+
+def upload_pcb_files(request):
+    if request.method == 'POST':
+        referer = request.META.get('HTTP_REFERER')
+        model = request.GET.get('model')
+
+        for pcb in PCB.objects.all():
+            if str(pcb) == model:
+                model = pcb
+                break
+
+        if referer is None or model is None:
+            return HttpResponse(status=400)
+        
+        form = PCB_Upload_FileForm(request.POST, request.FILES,  instance=model)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(status=200)
+        
+        HttpResponse(status=400)
+    
+    return HttpResponse(status=400)

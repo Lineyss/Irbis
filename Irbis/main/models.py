@@ -261,13 +261,13 @@ class PCB(Furniture):
     developed_by = models.ForeignKey(Employee, null=False, on_delete=models.PROTECT, verbose_name='Разработал')
     """Кем разработана плата"""
 
-    list_components = models.FileField(upload_to=f'images/{name}', null=True, blank=False, verbose_name='Перечень компонентов')
+    list_components = models.FileField(upload_to='files/xlsx', null=True, blank=True, verbose_name='Перечень компонентов')
     """Перечень компонентов"""
 
-    electrical_diagram = models.FileField(upload_to=f'images/{name}', null=True, blank=False, verbose_name='Электрическая схема')
+    electrical_diagram = models.FileField(upload_to='files/pdf', null=True, blank=True, verbose_name='Электрическая схема')
     """Электрическая схема"""
 
-    assembly_drawing = models.FileField(upload_to=f'images/{name}', null=True, blank=False, verbose_name='Сборный чертеж')
+    assembly_drawing = models.FileField(upload_to='files/pdf', null=True, blank=True, verbose_name='Сборный чертеж')
     """Сборный чертеж"""
 
     def __str__(self) -> str:
@@ -324,3 +324,17 @@ class ModuleComposition(Compose):
     class Meta:
         verbose_name = "Состав модуля"
         verbose_name_plural = "Составы модулей"
+
+
+# Модели не для базы данных
+
+class CustomField():
+    """Кастомная модель столбца"""
+    def __init__(self, name, verbose_name) -> None:
+        """
+            name - название по которому сопоставляется столбец и значение
+            verbose_name - название которое будет выводиться на страницу
+        """
+        self.name = name 
+        self.verbose_name = verbose_name
+        self._verbose_name = verbose_name
