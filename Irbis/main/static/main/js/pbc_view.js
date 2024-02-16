@@ -32,26 +32,12 @@ tbody.forEach(element=>{
     element.style.backgroundColor = color;
 })
 
-function get_input_form()
-{
-    let input_form = document.querySelectorAll(".upload_file_form_main > p > input")
-    // let correct_input_form = [];
-
-    // input_form.forEach(element=>{
-    //     let id =element.getAttribute("id") 
-    //     hasClear = /clear/;
-    //     if (!hasClear.test(id))
-    //         correct_input_form.push(element)
-    // });
-
-    return input_form
-}
-
 let button = document.getElementById("upload_pbc");
 let popup_container = document.querySelector(".popup-container")
 let button_close_popup = document.querySelector(".exit_popup")
-let form = document.querySelector(".upload_file_form_main")
-let input_form = get_input_form()
+let formComponents = document.querySelector(".upload_file_form_main")
+let formGerbers = document.getElementById('gerber_form')
+let input_form = document.querySelectorAll(".upload_file_form_main > p > input")
 let li = document.querySelectorAll('.files > ul > li')
 let p = document.querySelectorAll('.upload_file_form_main > p')
 
@@ -64,7 +50,7 @@ for(let i = 0; i < p.length; i++)
     }
 }
 
-form.addEventListener("submit", (e)=>{
+formComponents.addEventListener("submit", (e)=>{
     e.preventDefault();
     let isEmpty = true
 
@@ -89,7 +75,7 @@ form.addEventListener("submit", (e)=>{
     }
 
     if(!isEmpty)
-        sendRequest(form)
+        sendComponentsRequest(formComponents)
 })
 
 button_close_popup.addEventListener("click",()=>{
@@ -102,7 +88,13 @@ button.addEventListener("click", ()=>{
     document.body.style.overflow = 'auto';
 });
 
-function sendRequest(form)
+formGerbers.addEventListener("submit", (e)=>{
+    e.preventDefault()
+    sendComponentsRequest(formGerbers)
+
+})
+
+function sendComponentsRequest(form)
 {
     let formData = new FormData(form)
     let xhr = new XMLHttpRequest();
@@ -115,6 +107,6 @@ function sendRequest(form)
         if(xhr.status == 200)
             location.reload();
         else
-            alert('Ошибка при отправке запроса')
+            alert('Ошибка при отправке запроса' + xhr.responseText)
     }
 }

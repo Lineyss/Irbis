@@ -22,6 +22,10 @@ class UniqueComponent(models.Model):
     def __str__(self) -> str:
         return str(self.pk)
 
+    class Meta:
+        verbose_name = 'Уникальный идентификатор комонентов'
+        verbose_name_plural = 'Уникальный идентификатор комонентов'
+
 
 class Compose(models.Model):
     need_quantity = models.IntegerField(default=1, verbose_name='Необходимое количество')
@@ -74,7 +78,7 @@ class Furniture(models.Model):
         return super().save(*args, **kwargs)
 
     class Meta:
-        abstract = True
+        abstract = True 
 
 class AMain(Furniture):
     """Базовый класс для категорий Диодов, Транзисторов, Прочего, Конденсаторов, Резисторов"""
@@ -246,6 +250,19 @@ class Transistors(Element):
         verbose_name = 'Транзистор'
         verbose_name_plural = 'Транзисторы'
 
+class Gerber(models.Model):
+    """Класс гербер файлов"""
+
+    file = models.FileField(upload_to='files/gerber', null=True, blank=True, verbose_name='Файл')
+    """Гербер файл"""
+
+    def __str__(self) -> str:
+         return self.file.name
+    
+    class Meta:
+        verbose_name = 'Гербер файл'
+        verbose_name_plural = 'Гербер файлы'
+
 class PCB(Furniture):
     """Класс печатной платы"""
 
@@ -269,6 +286,9 @@ class PCB(Furniture):
 
     assembly_drawing = models.FileField(upload_to='files/pdf', null=True, blank=True, verbose_name='Сборный чертеж')
     """Сборный чертеж"""
+
+    gerber_files = models.ManyToManyField(Gerber, null=True, blank=True, verbose_name='Гербер файлы')
+    """Гербер файлы"""
 
     def __str__(self) -> str:
         return f"{self.decimal_number} ({self.name})"

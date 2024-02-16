@@ -100,6 +100,11 @@ class ModuleAdmin(ImportExportModelAdmin):
     exclude = ('category',)
     inlines = (Module_Inline,)
 
+@admin.register(Gerber)
+class GerberAdmin(ImportExportModelAdmin):
+    """Класс для изменения панели админа для таблицы Гербер"""
+    pass
+
 @admin.register(PCBComposition)
 class PCBCompositionAdmin(ImportExportModelAdmin):
     """Класс для изменения панели администратора для таблицы Состав модуля"""

@@ -58,8 +58,8 @@ class PCB_Upload_FileForm(forms.ModelForm):
 
         if list_components is not None:
             if type(list_components) != bool:
-                if list_components.name.endswith(".xlsx") == False:
-                    errors.append("Перечень компонентов может быть только в формате .xlsx")
+                if list_components.name.endswith(".xls") == False:
+                    errors.append("Перечень компонентов может быть только в формате .xls")
                 elif self.check_list_components(list_components) == False:
                     errors.append("Таблице не валидная")
                 else:
@@ -91,34 +91,31 @@ class PCB_Upload_FileForm(forms.ModelForm):
 
         worksheet = wb.active
 
-        if worksheet.max_column != 6 or worksheet.max_row < 1:
-            return False
-
-        for col in worksheet.iter_cols():
-            match col[0].value:
-                case 'Идентификатор компонента':
-                    if self.check_rows(worksheet, col, int) == False:
-                        return False
-                    for row in range(1, worksheet.max_row):
-                        if get_AMains_by_id_component(col[row].value)['model'] is None:
-                            return False
-                case 'Номер производителя':
-                    if self.check_rows(worksheet, col, str) == False:
-                        return False
-                case 'Описание':
-                    if self.check_rows(worksheet, col, str) == False:
-                        return False
-                case 'Кол-во на складе':
-                    if self.check_rows(worksheet, col, int) == False:
-                        return False
-                case 'Место':
-                    if self.check_rows(worksheet, col, str) == False:
-                        return False
-                case 'Нужно':
-                    if self.check_rows(worksheet, col, int) == False:
-                        return False
-                case _: 
-                    return False
+        # for col in worksheet.iter_cols():
+        #     match col[0].value:
+        #         case 'Идентификатор компонента':
+        #             if self.check_rows(worksheet, col, int) == False:
+        #                 return False
+        #             for row in range(1, worksheet.max_row):
+        #                 if get_AMains_by_id_component(col[row].value)['model'] is None:
+        #                     return False
+        #         case 'Номер производителя':
+        #             if self.check_rows(worksheet, col, str) == False:
+        #                 return False
+        #         case 'Описание':
+        #             if self.check_rows(worksheet, col, str) == False:
+        #                 return False
+        #         case 'Кол-во на складе':
+        #             if self.check_rows(worksheet, col, int) == False:
+        #                 return False
+        #         case 'Место':
+        #             if self.check_rows(worksheet, col, str) == False:
+        #                 return False
+        #         case 'Нужно':
+        #             if self.check_rows(worksheet, col, int) == False:
+        #                 return False
+        #         case _: 
+        #             return False
                 
         return True
 

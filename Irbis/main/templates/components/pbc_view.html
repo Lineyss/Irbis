@@ -11,7 +11,7 @@
                     ❌
                 </button>
             </div>
-            <form method="post" action="{% url 'pbc_upload_files' %}?model={{module}}" 
+            <form method="post" action="{% url 'pbc_upload_files' %}?model={{module}}&gerber_or_components=components" 
                   class="upload_file_form_main"  enctype='multipart/form-data'>
                 {% csrf_token %}
                 {{form_upload_files.as_p}}
@@ -31,7 +31,10 @@
                     <li>{{gbr}}</li>
                 {% endfor %}
             </ul>
-            <button>Загрузить заного</button>   
+            <form id="gerber_form" method="post" action="{% url 'pbc_upload_files' %}?model={{module}}&gerber_or_components=gerber">
+                {% csrf_token %}
+                <button>Загрузить заного</button>   
+            </form>
         </div>
         <div class="rightPanel">
             <img src="'"/>
@@ -57,7 +60,7 @@
         <h2>Доступность компонентов на складе для 1 шт</h2>
 
         {% if element.fields is None or element.items is None %}
-            <p>Комопнентов нету</p>
+            <p>Компонентов нету</p>
         {% else %}
             {% with fields=element.fields items=element.items %}
                 {% include 'components/table_category_view.html' %}

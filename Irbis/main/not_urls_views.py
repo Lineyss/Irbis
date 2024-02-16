@@ -1,7 +1,19 @@
+# from django.http import HttpResponse
 from .models_fields import get_AMains_by_id_component,get_furnitures
 from openpyxl import load_workbook
+from django.http import *
+from pathlib import Path
 from .models import *
 from .forms import *
+
+# from pygerber.API2D import render_file
+
+from pygerber.gerberx3.api import (
+      ColorScheme,
+      Rasterized2DLayer,
+      Rasterized2DLayerParams,
+)
+
 
 def module_detail_view(model)-> dict:
     data = get_data()
@@ -135,3 +147,34 @@ def checkFileExist(file)-> bool:
         return True
     except:
         return False
+
+def upload_components_files(request, model):
+    form = PCB_Upload_FileForm(request.POST, request.FILES,  instance=model)
+    if form.is_valid():
+        form.save()
+        return HttpResponse(status=200)
+    
+    return HttpResponseBadRequest(form.errors.values)
+
+def upload_gerber_files(model)->dict:
+    data = {}
+    i = 0
+    for file in Gerber.objects.filter(pcb__pk = model.pk): 
+        save_path = str(Path(file.file.path).parent)
+        save_path += f'temporary_files\\{i}.png'
+
+        try:
+            Rasterized2DLayer(
+                options=Rasterized2DLayerParams(
+                        source_path=file.file.path,
+                        colors=ColorScheme.COPPER_ALPHA,
+                ),
+            ).render().save("output.png")
+
+        except Exception as e:
+            print(e)
+            print("\n")
+
+        i+=1
+    
+    return data 

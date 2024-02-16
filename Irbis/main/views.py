@@ -183,22 +183,22 @@ def create_category(request, name):
 
 def upload_pcb_files(request):
     if request.method == 'POST':
-        referer = request.META.get('HTTP_REFERER')
         model = request.GET.get('model')
+        gerber_or_components = request.GET.get('gerber_or_components')
 
         for pcb in PCB.objects.all():
             if str(pcb) == model:
                 model = pcb
                 break
+            else:
+                model = None
 
-        if referer is None or model is None:
-            return HttpResponse(status=400)
-        
-        form = PCB_Upload_FileForm(request.POST, request.FILES,  instance=model)
-        if form.is_valid():
-            form.save()
-            return HttpResponse(status=200)
-        
-        HttpResponse(status=400)
-    
-    return HttpResponse(status=400)
+        if model is None: return HttpResponse(status=400)
+
+        if gerber_or_components == 'components':
+            return upload_components_files(request,model)
+        elif gerber_or_components == 'gerber':
+            return HttpResponse(status=200, content=upload_gerber_files(model))
+        return HttpResponseBadRequest()
+
+    return HttpResponseNotFound()
