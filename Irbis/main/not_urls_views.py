@@ -2,12 +2,9 @@
 from .models_fields import get_AMains_by_id_component,get_furnitures
 from openpyxl import load_workbook
 from django.http import *
-from pathlib import Path
+from Irbis.settings import BASE_DIR
 from .models import *
 from .forms import *
-
-# from pygerber.API2D import render_file
-
 from pygerber.gerberx3.api import (
       ColorScheme,
       Rasterized2DLayer,
@@ -30,8 +27,10 @@ def module_detail_view(model)-> dict:
 
     return data
 
-def pcb_detail_view(model)-> dict:
+def pcb_detail_view(model, gbrLoad)-> dict:
     data = get_data()
+    data['gbrs'] = None
+    data['buildFiles'] = None
 
     elements = PCBComposition.objects.filter(pcb = model)
 
@@ -56,9 +55,12 @@ def pcb_detail_view(model)-> dict:
         for i in range(len(data['element']['items'])):
             element = data['element']['items'][i]
             element.Need = elements[i].need_quantity
-     
-    data['gbrs'] = None
-    data['buildFiles'] = None
+
+    
+    if gbrLoad == 'True':
+        dict = upload_gerber_files(model)
+        data['gbrs'] = dict['title_file']
+        data['buildFiles'] = dict['png_path']
 
     return data
 
@@ -157,24 +159,51 @@ def upload_components_files(request, model):
     return HttpResponseBadRequest(form.errors.values)
 
 def upload_gerber_files(model)->dict:
-    data = {}
-    i = 0
-    for file in Gerber.objects.filter(pcb__pk = model.pk): 
-        save_path = str(Path(file.file.path).parent)
-        save_path += f'temporary_files\\{i}.png'
+    data = {
+        'title_file': [],
+        'png_path': [],
+    }
 
-        try:
-            Rasterized2DLayer(
-                options=Rasterized2DLayerParams(
-                        source_path=file.file.path,
-                        colors=ColorScheme.COPPER_ALPHA,
-                ),
-            ).render().save("output.png")
+    print(BASE_DIR)
 
-        except Exception as e:
-            print(e)
-            print("\n")
+    gerber = model.gerber_files.all()
+    for file in gerber:
+        path = str(file)
+        path = path.split('/')
+        name = path[len(path) - 1]
 
-        i+=1
-    
+        data['title_file'].append(name)
+        data['png_path'] = convert_gerber_to_png(str(file), name)
+
     return data 
+
+def convert_gerber_to_png(file_path, file_name = None)->str:
+    file_path = f"{BASE_DIR}\\media\\{file_path}"
+    lines = ''
+    
+    if file_name is None:
+        file_name = file_path.split('/')
+        file_name = file_path[len(file_name) - 1]
+
+    png_path = f"{BASE_DIR}\media\images\gerber\{file_name}.png"
+
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    with open(file_path, 'w') as file:
+        for line in lines:
+            if 'G04' not in line:
+                file.write(line)
+    
+    try:
+        Rasterized2DLayer(  
+            options=Rasterized2DLayerParams(
+                    source_path=file_path,
+                    colors=ColorScheme.COPPER_ALPHA,
+            ),
+        ).render().save(png_path)
+    except Exception as e:
+        print(str(e))
+        return None
+    
+    return png_path

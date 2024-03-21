@@ -136,7 +136,9 @@ def detail_view(request,name,pk):
     if type(model) is Module:
         data = module_detail_view(model)
     elif type(model) is PCB:
-        data = pcb_detail_view(model)
+        gbrLoad = request.GET.get('gbrLoad')
+        print(gbrLoad)
+        data = pcb_detail_view(model, gbrLoad)
         data['form_upload_files'] = PCB_Upload_FileForm(instance=model)
     else:
         return redirect(update_view, name , pk)
@@ -184,7 +186,6 @@ def create_category(request, name):
 def upload_pcb_files(request):
     if request.method == 'POST':
         model = request.GET.get('model')
-        gerber_or_components = request.GET.get('gerber_or_components')
 
         for pcb in PCB.objects.all():
             if str(pcb) == model:
@@ -195,10 +196,5 @@ def upload_pcb_files(request):
 
         if model is None: return HttpResponse(status=400)
 
-        if gerber_or_components == 'components':
-            return upload_components_files(request,model)
-        elif gerber_or_components == 'gerber':
-            return HttpResponse(status=200, content=upload_gerber_files(model))
-        return HttpResponseBadRequest()
-
+        return upload_components_files(request,model)
     return HttpResponseNotFound()

@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from django.core.exceptions import ValidationError
 from typing import Any
 from django.db import models
 import uuid
@@ -259,6 +259,15 @@ class Gerber(models.Model):
     def __str__(self) -> str:
          return self.file.name
     
+    def save(self, *args, **kwargs) -> None:
+        if self.file is not None:
+            path = self.file.path
+            extencion = path.split('.')[1]
+            if extencion[0] != 'G':
+                raise ValidationError("Не верный формат файла")
+        
+        return super().save(*args, **kwargs)
+    
     class Meta:
         verbose_name = 'Гербер файл'
         verbose_name_plural = 'Гербер файлы'
@@ -284,7 +293,7 @@ class PCB(Furniture):
     electrical_diagram = models.FileField(upload_to='files/pdf', null=True, blank=True, verbose_name='Электрическая схема')
     """Электрическая схема"""
 
-    assembly_drawing = models.FileField(upload_to='files/pdf', null=True, blank=True, verbose_name='Сборный чертеж')
+    assembly_drawing = models.FileField(upload_to='files/pdf', null=True, blank=True, verbose_name='PCBчертеж')
     """Сборный чертеж"""
 
     gerber_files = models.ManyToManyField(Gerber, null=True, blank=True, verbose_name='Гербер файлы')
@@ -347,7 +356,6 @@ class ModuleComposition(Compose):
 
 
 # Модели не для базы данных
-
 class CustomField():
     """Кастомная модель столбца"""
     def __init__(self, name, verbose_name) -> None:

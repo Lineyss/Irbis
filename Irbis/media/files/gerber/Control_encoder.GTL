@@ -1,17 +1,6 @@
-G04*
-G04 #@! TF.GenerationSoftware,Altium Limited,Altium Designer,21.8.1 (53)*
-G04*
-G04 Layer_Physical_Order=1*
-G04 Layer_Color=255*
 %FSLAX44Y44*%
 %MOMM*%
 G71*
-G04*
-G04 #@! TF.SameCoordinates,A13A9599-9D59-4998-A3CA-6CFB5E3765DF*
-G04*
-G04*
-G04 #@! TF.FilePolarity,Positive*
-G04*
 G01*
 G75*
 %ADD13C,0.7000*%
@@ -29,13 +18,11 @@ G75*
 %ADD52R,0.6000X0.7000*%
 %ADD53R,1.4000X0.6000*%
 %ADD54R,1.8000X0.6000*%
-G04:AMPARAMS|DCode=55|XSize=1.9mm|YSize=3.2mm|CornerRadius=0mm|HoleSize=0mm|Usage=FLASHONLY|Rotation=90.000|XOffset=0mm|YOffset=0mm|HoleType=Round|Shape=Octagon|*
 %AMOCTAGOND55*
 4,1,8,-1.6000,-0.4750,-1.6000,0.4750,-1.1250,0.9500,1.1250,0.9500,1.6000,0.4750,1.6000,-0.4750,1.1250,-0.9500,-1.1250,-0.9500,-1.6000,-0.4750,0.0*
 %
 %ADD55OCTAGOND55*%
 
-G04:AMPARAMS|DCode=56|XSize=0.5mm|YSize=0.6mm|CornerRadius=0mm|HoleSize=0mm|Usage=FLASHONLY|Rotation=225.000|XOffset=0mm|YOffset=0mm|HoleType=Round|Shape=Rectangle|*
 %AMROTATEDRECTD56*
 4,1,4,-0.0354,0.3889,0.3889,-0.0354,0.0354,-0.3889,-0.3889,0.0354,-0.0354,0.3889,0.0*
 %
@@ -43,7 +30,6 @@ G04:AMPARAMS|DCode=56|XSize=0.5mm|YSize=0.6mm|CornerRadius=0mm|HoleSize=0mm|Usag
 
 %ADD57R,0.8000X0.8000*%
 %ADD58R,0.8000X0.8000*%
-G04:AMPARAMS|DCode=59|XSize=0.5mm|YSize=0.6mm|CornerRadius=0mm|HoleSize=0mm|Usage=FLASHONLY|Rotation=135.000|XOffset=0mm|YOffset=0mm|HoleType=Round|Shape=Rectangle|*
 %AMROTATEDRECTD59*
 4,1,4,0.3889,0.0354,-0.0354,-0.3889,-0.3889,-0.0354,0.0354,0.3889,0.3889,0.0354,0.0*
 %

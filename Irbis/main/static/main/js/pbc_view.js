@@ -36,7 +36,6 @@ let button = document.getElementById("upload_pbc");
 let popup_container = document.querySelector(".popup-container")
 let button_close_popup = document.querySelector(".exit_popup")
 let formComponents = document.querySelector(".upload_file_form_main")
-let formGerbers = document.getElementById('gerber_form')
 let input_form = document.querySelectorAll(".upload_file_form_main > p > input")
 let li = document.querySelectorAll('.files > ul > li')
 let p = document.querySelectorAll('.upload_file_form_main > p')
@@ -88,25 +87,8 @@ button.addEventListener("click", ()=>{
     document.body.style.overflow = 'auto';
 });
 
-formGerbers.addEventListener("submit", (e)=>{
+document.getElementById("getGerber").addEventListener("click", (e)=>{
     e.preventDefault()
-    sendComponentsRequest(formGerbers)
-
+    url = location.href
+    location.href = url + "?gbrLoad=True"
 })
-
-function sendComponentsRequest(form)
-{
-    let formData = new FormData(form)
-    let xhr = new XMLHttpRequest();
-    
-    xhr.open(form.getAttribute('method'), form.getAttribute('action'));
-    
-    xhr.send(formData);
-
-    xhr.onload  = ()=>{
-        if(xhr.status == 200)
-            location.reload();
-        else
-            alert('Ошибка при отправке запроса' + xhr.responseText)
-    }
-}
