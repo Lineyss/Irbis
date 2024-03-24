@@ -179,6 +179,7 @@ def update_view(request,name, pk):
 def create_category(request, name):
     category = Category.objects.get(name = name)
     model = get_furnitures(category)['model']
+    print(model._meta.concrete_model)
     createView = get_createViewModel(model)
 
     return createView(request)

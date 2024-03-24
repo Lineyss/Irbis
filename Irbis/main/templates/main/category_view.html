@@ -34,10 +34,10 @@
 
     {% else %}
 
-        {{ form.errors }}
-
-        <div style="display: flex; justify-content: space-evenly; align-items: center;">
-            <form method="post" enctype='multipart/form-data'>
+    
+    <div style="display: flex; justify-content: space-evenly; align-items: center;">
+        {{ form.errors.as_p }}
+        <form method="post" enctype='multipart/form-data'>
                 {% csrf_token %}
                 
                 {{ form.as_p }}

@@ -257,7 +257,7 @@ class Gerber(models.Model):
     """Гербер файл"""
 
     def __str__(self) -> str:
-         return self.file.name
+        return self.file.name
     
     def save(self, *args, **kwargs) -> None:
         if self.file is not None:
