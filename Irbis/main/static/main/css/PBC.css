@@ -3,6 +3,14 @@ body, html
   overflow-x: hidden;
 }
 
+main
+{
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
 .content
 {
   width: 100%;
@@ -54,10 +62,16 @@ h1,h2
   flex-direction: column;
 }
 
-.rightPanel > img 
+.rightPanel
 {
-  width: auto;
-  height: auto;
+  position: relative; /* Для позиционирования вложенных изображений */
+}
+
+.rightPanel > img
+{
+  max-width: 100%; /* Используем максимальную ширину относительно контейнера */
+  max-height: 100%; /* Используем максимальную высоту относительно контейнера */
+  position: absolute; /* Перекрываем друг друга в контейнере */
 }
 
 .leftPanel > ul
@@ -115,23 +129,27 @@ h1,h2
 .gbr
 {
   width: 100%;
-  height: 10%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 3px 0px;
 }
 
 .gbr > span:nth-child(1)
 {
   height: 100%;
-  min-width: 60%;
-  text-align: center;
-}
+  width: auto;
+  text-align: left;
+  overflow-y: hidden;
+  overflow-x: hidden;
+} 
+
 
 .gbr > span:nth-child(2)
 {
-  width: 40%;
-  text-align: center;
+  width: auto;
+  text-align: right;
 }
 
 .upload_file_form_main > p

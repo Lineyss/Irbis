@@ -137,7 +137,6 @@ def detail_view(request,name,pk):
         data = module_detail_view(model)
     elif type(model) is PCB:
         gbrLoad = request.GET.get('gbrLoad')
-        print(gbrLoad)
         data = pcb_detail_view(model, gbrLoad)
         data['form_upload_files'] = PCB_Upload_FileForm(instance=model)
     else:

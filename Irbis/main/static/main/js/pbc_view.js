@@ -90,5 +90,36 @@ button.addEventListener("click", ()=>{
 document.getElementById("getGerber").addEventListener("click", (e)=>{
     e.preventDefault()
     url = location.href
-    location.href = url + "?gbrLoad=True"
+    if(!url.includes("?gbrLoad=True"))
+        location.href = url + "?gbrLoad=True"
+    else
+        location.reload();
 })
+
+function load_image(input)
+{
+    let id = input.getAttribute("id")
+    let img = document.getElementById('IMG_'+id)
+    
+    console.log(img)
+
+    if(input.checked)
+    {
+        url = location.origin + '/media/images/gerber/' + id + ".png"
+        img.setAttribute('src', url)
+    }
+    else
+        img.setAttribute('src', '')
+}
+
+const inputs = document.querySelectorAll(".gbrInput")
+
+for(let i = 0;i < inputs.length;i++)
+{
+    inputs[i].addEventListener("change", ()=>{
+        load_image(inputs[i])
+    })
+
+    inputs[i].checked = true
+    load_image(inputs[i])
+}

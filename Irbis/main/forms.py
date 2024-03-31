@@ -21,6 +21,7 @@ def get_model_form(Model:Type[models.Model]):
             
             def __init__(self, *args, **kwargs):
                 self.instance = kwargs.get('instance', None)
+                self.gerber = None
                 super(PCBForm, self).__init__(*args, **kwargs)
 
             def clean(self) -> dict[str, Any]:
@@ -39,8 +40,9 @@ def get_model_form(Model:Type[models.Model]):
                 
             def save(self, commit=True):
                 pcb = super().save(commit=commit)
-                pcb.gerber_files.add(self.gerber)
-                pcb.save()
+                if self.gerber is not None:
+                    pcb.gerber_files.add(self.gerber)
+                    pcb.save()
                 return pcb
 
         return PCBForm

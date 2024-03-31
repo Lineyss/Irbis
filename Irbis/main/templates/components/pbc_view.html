@@ -41,7 +41,9 @@
             <button id="getGerber">Загрузить заного</button>   
         </div>
         <div class="rightPanel">
-            <img id="gerberImg" src="None" style="width: 35%; max-height: 100%; position: absolute;"/>
+            {% for gbr in gbrs %}
+                <img id="IMG_{{gbr}}" src=""/>
+            {% endfor %}
         </div>
     </div>
     <div class="files">
@@ -76,30 +78,3 @@
 </div>
 
 <script src="{% static 'main/js/pbc_view.js' %}"></script>
-
-<script>
-    function load_image(inputs)
-    {
-        for(let i = 0; i < inputs.length; i++)
-        {
-            if(inputs[i].checked)
-            {
-                id = inputs[i].getAttribute("id")
-                url = location.origin + '/media/images/gerber/' + id + ".png"
-                img.setAttribute('src', url)
-                break
-            }
-            else
-                img.setAttribute('src', 'None')
-        }
-    }
-
-    const img = document.getElementById("gerberImg")
-    const inputs = document.querySelectorAll(".gbrInput")
-
-    inputs.forEach(element=>{
-        element.addEventListener("click", ()=>{
-            load_image(inputs)
-        })
-    })
-</script>

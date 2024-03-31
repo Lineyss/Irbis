@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-iiranp@mfjgsyq&3zf#h!1gzs@m62ggsty_b7un5g9yq2#ha&b
 DEBUG = True
 
 # ALLOWED_HOSTS = ['zeekova.pythonanywhere.com']
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['91.214.243.150', '192.168.0.111', '127.0.0.1']
 
 
 # Application definition

@@ -4,12 +4,14 @@ from openpyxl import load_workbook
 from django.http import *
 from Irbis.settings import BASE_DIR
 from .models import *
+from PIL import Image
 from .forms import *
 from pygerber.gerberx3.api import (
       ColorScheme,
       Rasterized2DLayer,
       Rasterized2DLayerParams,
 )
+import os
 
 
 def module_detail_view(model)-> dict:
@@ -109,7 +111,6 @@ def check_valid_files(list_components,electrical_diagram, assembly_drawing)->boo
     return True
 
 def check_list_components(IDC, module)->bool:
-
     try:
         pcb = PCBComposition.objects.get(pcb = module, element = IDC)
         return True
@@ -177,9 +178,40 @@ def upload_gerber_files(model)->dict:
 
     return data 
 
+def crop_image(path):
+    image = Image.open(path)
+
+    left = 0
+    top = 0
+    right = 1600
+    bottom = 2100
+
+    cropped_image = image.crop((left, top, right, bottom))
+
+    cropped_image.save(path)
+
+def resize(path):
+    background_image = Image.new('RGBA', (1600, 2000), (255, 255, 255, 0))
+    name = os.path.basename(path)
+    base_dir = f"{BASE_DIR}\media\images\help\{name}.png"
+    print(base_dir)
+    background_image.save(base_dir)
+    background_image = Image.open(base_dir)
+
+    overlay_image = Image.open(path)
+    bg_width, bg_height = background_image.size
+    overlay_width, overlay_height = overlay_image.size
+    position = ((bg_width - overlay_width) // 2, (bg_height - overlay_height) // 2)
+    background_image.paste(overlay_image, position)
+    background_image.save(path)
+
+    # os.remove(base_dir)
+
 def convert_gerber_to_png(file_path, file_name = None)->str:
     file_path = f"{BASE_DIR}\\media\\{file_path}"
     lines = ''
+    color=''
+    extends = os.path.basename(file_path).split('.')[1]
     
     if file_name is None:
         file_name = file_path.split('/')
@@ -196,14 +228,30 @@ def convert_gerber_to_png(file_path, file_name = None)->str:
                 file.write(line)
     
     try:
+        if extends == 'GTL' or extends == 'GBL' or extends == 'GKO':
+            color = ColorScheme.COPPER_ALPHA
+        else:
+            color = ColorScheme.SILK_ALPHA
         Rasterized2DLayer(  
             options=Rasterized2DLayerParams(
-                    source_path=file_path,
-                    colors=ColorScheme.COPPER_ALPHA,
+                source_path=file_path,
+                colors = color,
             ),
         ).render().save(png_path)
+        image = Image.open(png_path)
+        original_width, original_height = image.size
+        print('--------------')
+        print(png_path)
+        print(f'{original_width} - {original_height}')
+        # if original_width < 1600 and original_height < 2100:
+        #     print('resize')
+        #     resize(png_path)
+        # else:
+        #     print('crop_image')
+        crop_image(png_path)
+        print('--------------')
     except Exception as e:
         print(str(e))
         return None
-    
+
     return png_path
